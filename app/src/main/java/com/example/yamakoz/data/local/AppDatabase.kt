@@ -67,12 +67,12 @@ private fun seed(db: SupportSQLiteDatabase) {
     inventory.forEachIndexed { index, (category, product) ->
         val id = index + 1L
         val price = prices[index] * 100L
-        db.execSQL("INSERT INTO categories (id, name) VALUES (?, ?)", arrayOf(id, category))
-        db.execSQL("INSERT INTO products (id, name, categoryId, price, stock) VALUES (?, ?, ?, ?, 15)", arrayOf(id, product, id, price))
-        db.execSQL("INSERT INTO catalog (productId, categoryId) VALUES (?, ?)", arrayOf(id, id))
-        db.execSQL("INSERT INTO customers (id, name, phone, email, registrationDate) VALUES (?, ?, ?, NULL, ?)", arrayOf(id, "Демо-клиент $id", "+700000000${id.toString().padStart(2, '0')}", now))
-        db.execSQL("INSERT INTO cart (customerId, productId, quantity) VALUES (?, ?, 1)", arrayOf(id, id))
-        db.execSQL("INSERT INTO orders (id, customerId, orderDate, structure, amount, status) VALUES (?, ?, ?, ?, ?, 'paid')", arrayOf(id, id, now, "$product × 1", price))
-        db.execSQL("INSERT INTO cheques (orderId, customerId, dateIssued, amount) VALUES (?, ?, ?, ?)", arrayOf(id, id, now, price))
+        db.execSQL("INSERT INTO categories (id, name) VALUES (?, ?)", arrayOf<Any?>(id, category))
+        db.execSQL("INSERT INTO products (id, name, categoryId, price, stock) VALUES (?, ?, ?, ?, 15)", arrayOf<Any?>(id, product, id, price))
+        db.execSQL("INSERT INTO catalog (productId, categoryId) VALUES (?, ?)", arrayOf<Any?>(id, id))
+        db.execSQL("INSERT INTO customers (id, name, phone, email, registrationDate) VALUES (?, ?, ?, NULL, ?)", arrayOf<Any?>(id, "Демо-клиент $id", "+700000000${id.toString().padStart(2, '0')}", now))
+        db.execSQL("INSERT INTO cart (customerId, productId, quantity) VALUES (?, ?, 1)", arrayOf<Any?>(id, id))
+        db.execSQL("INSERT INTO orders (id, customerId, orderDate, structure, amount, status) VALUES (?, ?, ?, ?, ?, 'paid')", arrayOf<Any?>(id, id, now, "$product × 1", price))
+        db.execSQL("INSERT INTO cheques (orderId, customerId, dateIssued, amount) VALUES (?, ?, ?, ?)", arrayOf<Any?>(id, id, now, price))
     }
 }

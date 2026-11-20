@@ -21,10 +21,10 @@ interface ShopDao {
     suspend fun insertCustomer(customer: Customer): Long
 
     @Query("INSERT INTO cart VALUES (:customerId, :productId, 1) ON CONFLICT(customerId, productId) DO UPDATE SET quantity = quantity + 1")
-    suspend fun add(customerId: Long, productId: Long)
+    suspend fun add(customerId: Long, productId: Long): Long
 
     @Query("DELETE FROM cart WHERE customerId = :customerId AND productId = :productId")
-    suspend fun remove(customerId: Long, productId: Long)
+    suspend fun remove(customerId: Long, productId: Long): Int
 
     @Query(CART)
     fun cart(customerId: Long): Flow<List<CartItem>>
@@ -33,7 +33,7 @@ interface ShopDao {
     suspend fun readCart(customerId: Long): List<CartItem>
 
     @Query("DELETE FROM cart WHERE customerId = :customerId")
-    suspend fun clearCart(customerId: Long)
+    suspend fun clearCart(customerId: Long): Int
 
     @Query("UPDATE products SET stock = stock - :quantity WHERE id = :productId AND stock >= :quantity")
     suspend fun deductStock(productId: Long, quantity: Int): Int
@@ -51,7 +51,7 @@ interface ShopDao {
     suspend fun markPaid(customerId: Long, orderId: Long): Int
 
     @Insert
-    suspend fun insertCheque(cheque: Cheque)
+    suspend fun insertCheque(cheque: Cheque): Long
 
     @Query("SELECT * FROM cheques WHERE customerId = :customerId AND orderId = :orderId")
     fun cheque(customerId: Long, orderId: Long): Flow<Cheque?>
