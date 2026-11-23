@@ -11,7 +11,10 @@ import com.example.yamakoz.data.local.entity.Category
 
 @Composable
 fun CatalogScreen(categories: List<Category>, select: (Long) -> Unit) {
-    LazyColumn(contentPadding = PaddingValues(16.dp), verticalArrangement = Arrangement.spacedBy(8.dp)) {
+    LazyColumn(
+        contentPadding = PaddingValues(16.dp),
+        verticalArrangement = Arrangement.spacedBy(8.dp)
+    ) {
         items(categories, key = { it.id }) { category ->
             OutlinedButton(onClick = { select(category.id) }, modifier = Modifier.fillMaxWidth()) {
                 Text(category.name)

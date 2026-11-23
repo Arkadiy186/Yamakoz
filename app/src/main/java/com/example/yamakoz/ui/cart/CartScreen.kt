@@ -12,7 +12,12 @@ import com.example.yamakoz.ui.catalog.priceText
 
 @Composable
 fun CartScreen(items: List<CartItem>, busy: Boolean, remove: (Long) -> Unit, checkout: () -> Unit) {
-    Column(Modifier.fillMaxSize().padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
+    Column(
+        Modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
         if (items.isEmpty()) Text("Корзина пуста")
         LazyColumn(Modifier.weight(1f), verticalArrangement = Arrangement.spacedBy(8.dp)) {
             items(items, key = { it.productId }) { item ->
@@ -20,7 +25,10 @@ fun CartScreen(items: List<CartItem>, busy: Boolean, remove: (Long) -> Unit, che
                     Column(Modifier.padding(12.dp)) {
                         Text(item.name, style = MaterialTheme.typography.titleMedium)
                         Text("${item.quantity} шт. · ${priceText(item.price * item.quantity)}")
-                        TextButton(onClick = { remove(item.productId) }, enabled = !busy) { Text("Удалить") }
+                        TextButton(
+                            onClick = { remove(item.productId) },
+                            enabled = !busy
+                        ) { Text("Удалить") }
                     }
                 }
             }

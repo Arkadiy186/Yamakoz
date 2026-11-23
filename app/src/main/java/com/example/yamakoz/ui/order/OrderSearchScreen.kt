@@ -13,10 +13,17 @@ import androidx.compose.ui.unit.dp
 fun OrderSearchScreen(find: (Long) -> Unit) {
     var number by rememberSaveable { mutableStateOf("") }
     val id = number.toLongOrNull()?.takeIf { it > 0 }
-    Column(Modifier.fillMaxWidth().padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        OutlinedTextField(number, { number = it.filter { char -> char in '0'..'9' } },
+    Column(
+        Modifier
+            .fillMaxWidth()
+            .padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        OutlinedTextField(
+            number, { number = it.filter { char -> char in '0'..'9' } },
             Modifier.fillMaxWidth(), label = { Text("Номер заказа") },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number), singleLine = true)
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Number), singleLine = true
+        )
         Button(onClick = { id?.let(find) }, enabled = id != null) { Text("Найти заказ") }
     }
 }

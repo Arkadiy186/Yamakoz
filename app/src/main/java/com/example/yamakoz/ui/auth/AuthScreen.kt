@@ -14,12 +14,35 @@ fun AuthScreen(busy: Boolean, signIn: (String, String, String) -> Unit) {
     var phone by rememberSaveable { mutableStateOf("") }
     var name by rememberSaveable { mutableStateOf("") }
     var email by rememberSaveable { mutableStateOf("") }
-    Column(Modifier.fillMaxWidth().padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        OutlinedTextField(phone, { phone = it }, Modifier.fillMaxWidth(), label = { Text("Телефон") },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone), singleLine = true)
-        OutlinedTextField(name, { name = it }, Modifier.fillMaxWidth(), label = { Text("Имя при регистрации") }, singleLine = true)
-        OutlinedTextField(email, { email = it }, Modifier.fillMaxWidth(), label = { Text("Почта при регистрации") },
-            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email), singleLine = true)
+    Column(
+        Modifier
+            .fillMaxWidth()
+            .padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        OutlinedTextField(
+            phone,
+            { phone = it },
+            Modifier.fillMaxWidth(),
+            label = { Text("Телефон") },
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Phone),
+            singleLine = true
+        )
+        OutlinedTextField(
+            name,
+            { name = it },
+            Modifier.fillMaxWidth(),
+            label = { Text("Имя при регистрации") },
+            singleLine = true
+        )
+        OutlinedTextField(
+            email,
+            { email = it },
+            Modifier.fillMaxWidth(),
+            label = { Text("Почта при регистрации") },
+            keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
+            singleLine = true
+        )
         Button(onClick = { signIn(phone, name, email) }, enabled = !busy && phone.isNotBlank()) {
             Text("Продолжить")
         }

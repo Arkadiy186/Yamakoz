@@ -11,9 +11,20 @@ import com.example.yamakoz.data.local.entity.Order
 import com.example.yamakoz.ui.catalog.priceText
 
 @Composable
-fun OrderScreen(order: Order, phone: String, busy: Boolean, pay: () -> Unit, viewCheque: () -> Unit) {
-    Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp)) {
+fun OrderScreen(
+    order: Order,
+    phone: String,
+    busy: Boolean,
+    pay: () -> Unit,
+    viewCheque: () -> Unit
+) {
+    Column(
+        Modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+            .padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
         Text("Заказ №${order.id}", style = MaterialTheme.typography.headlineSmall)
         Text("Телефон: $phone")
         Text("Пункт выдачи: Магазин бытовой техники, г. Казань")

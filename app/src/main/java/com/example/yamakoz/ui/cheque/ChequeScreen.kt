@@ -15,13 +15,19 @@ import java.time.ZoneId
 import java.time.format.DateTimeFormatter
 import java.util.Locale
 
-private val receiptDate = DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm", Locale.forLanguageTag("ru-RU"))
-    .withZone(ZoneId.of("Europe/Moscow"))
+private val receiptDate =
+    DateTimeFormatter.ofPattern("dd.MM.yyyy HH:mm", Locale.forLanguageTag("ru-RU"))
+        .withZone(ZoneId.of("Europe/Moscow"))
 
 @Composable
 fun ChequeScreen(order: Order, cheque: Cheque) {
-    Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState()).padding(16.dp),
-        verticalArrangement = Arrangement.spacedBy(12.dp)) {
+    Column(
+        Modifier
+            .fillMaxSize()
+            .verticalScroll(rememberScrollState())
+            .padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
         Text("Заказ №${order.id}", style = MaterialTheme.typography.headlineSmall)
         Text("Дата: ${receiptDate.format(Instant.ofEpochMilli(cheque.dateIssued))}")
         HorizontalDivider()

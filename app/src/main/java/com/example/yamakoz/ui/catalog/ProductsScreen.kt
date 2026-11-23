@@ -13,12 +13,29 @@ import java.text.NumberFormat
 import java.util.Locale
 
 internal fun priceText(kopecks: Long): String =
-    NumberFormat.getCurrencyInstance(Locale.forLanguageTag("ru-RU")).format(BigDecimal.valueOf(kopecks, 2))
+    NumberFormat.getCurrencyInstance(Locale.forLanguageTag("ru-RU"))
+        .format(BigDecimal.valueOf(kopecks, 2))
 
 @Composable
-fun ProductsScreen(products: List<Product>?, search: String, onSearch: (String) -> Unit, add: (Long) -> Unit) {
-    Column(Modifier.fillMaxSize().padding(16.dp), verticalArrangement = Arrangement.spacedBy(12.dp)) {
-        OutlinedTextField(search, onSearch, Modifier.fillMaxWidth(), label = { Text("Поиск по названию") }, singleLine = true)
+fun ProductsScreen(
+    products: List<Product>?,
+    search: String,
+    onSearch: (String) -> Unit,
+    add: (Long) -> Unit
+) {
+    Column(
+        Modifier
+            .fillMaxSize()
+            .padding(16.dp),
+        verticalArrangement = Arrangement.spacedBy(12.dp)
+    ) {
+        OutlinedTextField(
+            search,
+            onSearch,
+            Modifier.fillMaxWidth(),
+            label = { Text("Поиск по названию") },
+            singleLine = true
+        )
         if (products == null) {
             CircularProgressIndicator()
         } else {
@@ -30,7 +47,10 @@ fun ProductsScreen(products: List<Product>?, search: String, onSearch: (String) 
                             Text(product.name, style = MaterialTheme.typography.titleMedium)
                             Text(priceText(product.price))
                             Text("В наличии: ${product.stock}")
-                            Button(onClick = { add(product.id) }, enabled = product.stock > 0) { Text("В корзину") }
+                            Button(
+                                onClick = { add(product.id) },
+                                enabled = product.stock > 0
+                            ) { Text("В корзину") }
                         }
                     }
                 }
