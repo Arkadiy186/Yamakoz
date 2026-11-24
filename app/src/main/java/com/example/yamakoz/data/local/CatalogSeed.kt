@@ -66,13 +66,16 @@ private val additionalProductsByCategoryId = mapOf(
 )
 
 internal fun seedAdditionalProducts(db: SupportSQLiteDatabase) {
-    db.compileStatement("INSERT INTO products (name, categoryId, price, stock) VALUES (?, ?, ?, 15)").use { insert ->
+    db.compileStatement("INSERT INTO products (name, categoryId, price, stock) SELECT ?, ?, ?, 15 WHERE NOT EXISTS (SELECT 1 FROM products WHERE categoryId = ? AND name = ?)").use { insert ->
         for ((categoryId, products) in additionalProductsByCategoryId) {
             for ((name, price) in products) {
                 insert.bindString(1, name)
                 insert.bindLong(2, categoryId)
                 insert.bindLong(3, price * 100L)
+                insert.bindLong(4, categoryId)
+                insert.bindString(5, name)
                 val productId = insert.executeInsert()
+                if (productId == -1L) continue
                 db.execSQL(
                     "INSERT INTO catalog (productId, categoryId) VALUES (?, ?)",
                     arrayOf<Any?>(productId, categoryId),

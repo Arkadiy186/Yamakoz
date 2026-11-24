@@ -20,7 +20,7 @@ class ShopRepository(private val database: AppDatabase) {
 
     fun cheque(customerId: Long, orderId: Long) = dao.cheque(customerId, orderId)
 
-    suspend fun signIn(input: String, name: String, email: String?): Customer = database.withTransaction {
+    suspend fun signIn(input: String, name: String): Customer = database.withTransaction {
         require(input.all { it in '0'..'9' || it in "+()- " }) { "Введите номер телефона" }
         val digits = input.filter { it in '0'..'9' }
         val national = when {
@@ -31,7 +31,7 @@ class ShopRepository(private val database: AppDatabase) {
         val phone = "+7$national"
         dao.customer(phone)?.let { return@withTransaction it }
         val customer = Customer(name = name.trim().ifEmpty { "Клиент" }, phone = phone,
-            email = email?.trim()?.takeIf { it.isNotEmpty() }, registrationDate = System.currentTimeMillis())
+            registrationDate = System.currentTimeMillis())
         customer.copy(id = dao.insertCustomer(customer))
     }
 
