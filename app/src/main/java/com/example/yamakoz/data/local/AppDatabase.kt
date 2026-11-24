@@ -2,12 +2,13 @@ package com.example.yamakoz.data.local
 
 import android.content.Context
 import androidx.room.*
+import androidx.room.migration.Migration
 import androidx.sqlite.db.SupportSQLiteDatabase
 import com.example.yamakoz.data.local.entity.*
 
 @Database(
     entities = [Category::class, Product::class, CatalogEntry::class, Customer::class, CartEntry::class, Order::class, Cheque::class],
-    version = 1,
+    version = 2,
     exportSchema = false,
 )
 abstract class AppDatabase : RoomDatabase() {
@@ -16,13 +17,21 @@ abstract class AppDatabase : RoomDatabase() {
     companion object {
         fun create(context: Context): AppDatabase =
             Room.databaseBuilder(context.applicationContext, AppDatabase::class.java, "shop.db")
+                .addMigrations(CatalogMigration)
                 .addCallback(object : Callback() {
                     override fun onCreate(db: SupportSQLiteDatabase) {
                         installTriggers(db)
                         seed(db)
+                        seedAdditionalProducts(db)
                     }
                 })
                 .build()
+    }
+}
+
+private object CatalogMigration : Migration(1, 2) {
+    override fun migrate(db: SupportSQLiteDatabase) {
+        seedAdditionalProducts(db)
     }
 }
 

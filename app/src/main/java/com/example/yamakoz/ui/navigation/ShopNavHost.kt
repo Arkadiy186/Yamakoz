@@ -1,10 +1,18 @@
 package com.example.yamakoz.ui.navigation
 
+import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.selection.selectable
+import androidx.compose.foundation.selection.selectableGroup
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.runtime.saveable.rememberSaveable
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.draw.clip
+import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.semantics.Role
+import androidx.compose.ui.unit.dp
 import androidx.lifecycle.createSavedStateHandle
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.lifecycle.viewmodel.initializer
@@ -57,30 +65,33 @@ fun ShopNavHost(repository: ShopRepository) {
 
     Scaffold(
         snackbarHost = { SnackbarHost(snackbar) },
-        topBar = {
-            TopAppBar(
-                title = { Text(title) },
-                navigationIcon = {
-                    if (route != null && route != CATALOG) {
-                        TextButton(onClick = { nav.popBackStack() }) { Text("Назад") }
-                    }
-                },
-                actions = {
-                    if (route == CATALOG) {
-                        TextButton(onClick = { nav.navigate(SEARCH) { launchSingleTop = true } }) {
-                            Text("Заказы")
+        topBar = { TopAppBar(title = { Text(title) }) },
+        bottomBar = {
+            if (owner != null) {
+                val currentTab = when (route) {
+                    CART -> CART
+                    SEARCH, ORDER, CHEQUE -> SEARCH
+                    else -> CATALOG
+                }
+                ShopBottomBar(currentTab) { destination ->
+                    if (route != destination) {
+                        if (destination == CATALOG) {
+                            nav.popBackStack(CATALOG, inclusive = false)
+                        } else {
+                            nav.navigate(destination) {
+                                popUpTo(CATALOG)
+                                launchSingleTop = true
+                            }
                         }
                     }
-                    if (route == CATALOG || route == PRODUCTS) {
-                        TextButton(onClick = { nav.navigate(CART) { launchSingleTop = true } }) {
-                            Text("Корзина")
-                        }
-                    }
-                },
-            )
+                }
+            }
         },
     ) { padding ->
-        val modifier = Modifier.fillMaxSize().padding(padding).imePadding()
+        val modifier = Modifier
+            .fillMaxSize()
+            .padding(padding)
+            .imePadding()
         if (owner == null) {
             Box(modifier) {
                 val model = viewModel<AuthViewModel>(factory = viewModelFactory {
@@ -102,7 +113,14 @@ fun ShopNavHost(repository: ShopRepository) {
                 composable(PRODUCTS, arguments = idArgument) { page ->
                     val id = requireNotNull(page.arguments).getLong("id")
                     val model = viewModel<ProductsViewModel>(factory = viewModelFactory {
-                        initializer { ProductsViewModel(repository, createSavedStateHandle(), owner, id) }
+                        initializer {
+                            ProductsViewModel(
+                                repository,
+                                createSavedStateHandle(),
+                                owner,
+                                id
+                            )
+                        }
                     })
                     ProductsRoute(model, message)
                 }
@@ -118,14 +136,22 @@ fun ShopNavHost(repository: ShopRepository) {
                     val model = viewModel<OrderSearchViewModel>(factory = viewModelFactory {
                         initializer { OrderSearchViewModel(repository, owner) }
                     })
-                    OrderSearchRoute(model, message) { nav.navigate("order/$it") { launchSingleTop = true } }
+                    OrderSearchRoute(model, message) {
+                        nav.navigate("order/$it") {
+                            launchSingleTop = true
+                        }
+                    }
                 }
                 composable(ORDER, arguments = idArgument) { page ->
                     val id = requireNotNull(page.arguments).getLong("id")
                     val model = viewModel<OrderViewModel>(factory = viewModelFactory {
                         initializer { OrderViewModel(repository, owner, id) }
                     })
-                    OrderRoute(model, phone, message) { nav.navigate("cheque/$id") { launchSingleTop = true } }
+                    OrderRoute(
+                        model,
+                        phone,
+                        message
+                    ) { nav.navigate("cheque/$id") { launchSingleTop = true } }
                 }
                 composable(CHEQUE, arguments = idArgument) { page ->
                     val id = requireNotNull(page.arguments).getLong("id")
@@ -133,6 +159,51 @@ fun ShopNavHost(repository: ShopRepository) {
                         initializer { ChequeViewModel(repository, owner, id) }
                     })
                     ChequeRoute(model)
+                }
+            }
+        }
+    }
+}
+
+@Composable
+private fun ShopBottomBar(selected: String, navigate: (String) -> Unit) {
+    val tabs = listOf(
+        Triple(CATALOG, "Каталог", ShopTabIcon.Catalog),
+        Triple(CART, "Корзина", ShopTabIcon.Cart),
+        Triple(SEARCH, "Заказы", ShopTabIcon.Orders),
+    )
+    Surface(color = MaterialTheme.colorScheme.surfaceContainer, tonalElevation = 3.dp) {
+        Row(
+            Modifier
+                .fillMaxWidth()
+                .navigationBarsPadding()
+                .padding(horizontal = 8.dp, vertical = 6.dp)
+                .selectableGroup(),
+            horizontalArrangement = Arrangement.spacedBy(4.dp),
+        ) {
+            for ((destination, label, icon) in tabs) {
+                val active = selected == destination
+                Box(
+                    Modifier
+                        .weight(1f)
+                        .heightIn(min = 56.dp)
+                        .clip(MaterialTheme.shapes.extraLarge)
+                        .background(if (active) MaterialTheme.colorScheme.primaryContainer else Color.Transparent)
+                        .selectable(
+                            selected = active,
+                            role = Role.Tab,
+                            onClick = { navigate(destination) }),
+                    contentAlignment = Alignment.Center,
+                ) {
+                    val tint = if (active) MaterialTheme.colorScheme.onPrimaryContainer
+                    else MaterialTheme.colorScheme.onSurfaceVariant
+                    Column(
+                        horizontalAlignment = Alignment.CenterHorizontally,
+                        verticalArrangement = Arrangement.spacedBy(3.dp),
+                    ) {
+                        ShopNavigationIcon(icon, tint)
+                        Text(label, color = tint, style = MaterialTheme.typography.labelLarge)
+                    }
                 }
             }
         }
