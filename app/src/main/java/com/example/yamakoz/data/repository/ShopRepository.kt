@@ -10,7 +10,7 @@ class ShopRepository(private val database: AppDatabase) {
 
     fun categories() = dao.categories()
 
-    fun products(categoryId: Long, search: String) = dao.products(categoryId).map { products ->
+    fun products(customerId: Long, categoryId: Long, search: String) = dao.products(customerId, categoryId).map { products ->
         products.filter { it.name.contains(search.trim(), ignoreCase = true) }
     }
 
@@ -35,7 +35,10 @@ class ShopRepository(private val database: AppDatabase) {
         customer.copy(id = dao.insertCustomer(customer))
     }
 
-    suspend fun add(customerId: Long, productId: Long) = dao.add(customerId, productId)
+    suspend fun add(customerId: Long, productId: Long) = database.withTransaction {
+        check(dao.canAdd(customerId, productId) == true) { "Доступный остаток закончился" }
+        dao.add(customerId, productId)
+    }
 
     suspend fun remove(customerId: Long, productId: Long) = dao.remove(customerId, productId)
 

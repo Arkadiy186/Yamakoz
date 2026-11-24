@@ -32,14 +32,14 @@ fun AuthScreen(busy: Boolean, signIn: (String, String, String) -> Unit) {
             name,
             { name = it },
             Modifier.fillMaxWidth(),
-            label = { Text("Имя при регистрации") },
+            label = { Text("Имя (не обязательно)") },
             singleLine = true
         )
         OutlinedTextField(
             email,
             { email = it },
             Modifier.fillMaxWidth(),
-            label = { Text("Почта при регистрации") },
+            label = { Text("Почта (не обязательно)") },
             keyboardOptions = KeyboardOptions(keyboardType = KeyboardType.Email),
             singleLine = true
         )

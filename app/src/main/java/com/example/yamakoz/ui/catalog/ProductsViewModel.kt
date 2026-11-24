@@ -15,7 +15,7 @@ class ProductsViewModel(
     categoryId: Long,
 ) : ActionViewModel<Unit>() {
     val query = saved.getStateFlow("query", "")
-    val products = query.flatMapLatest { repository.products(categoryId, it).screenData() }
+    val products = query.flatMapLatest { repository.products(customerId, categoryId, it).screenData() }
         .stateIn(viewModelScope, SharingStarted.WhileSubscribed(5_000), ScreenData.Loading)
 
     fun search(value: String) { saved["query"] = value }

@@ -6,13 +6,27 @@ import kotlinx.coroutines.flow.Flow
 
 data class CartItem(val productId: Long, val name: String, val price: Long, val quantity: Int)
 
+data class ProductAvailability(val id: Long, val name: String, val price: Long, val available: Int)
+
 @Dao
 interface ShopDao {
     @Query("SELECT * FROM categories ORDER BY name")
     fun categories(): Flow<List<Category>>
 
-    @Query("SELECT p.* FROM products p JOIN catalog c ON p.id = c.productId WHERE c.categoryId = :categoryId ORDER BY p.name")
-    fun products(categoryId: Long): Flow<List<Product>>
+    @Query("""
+        SELECT p.id, p.name, p.price, MAX(0, p.stock - COALESCE(b.quantity, 0)) AS available
+        FROM catalog c JOIN products p ON p.id = c.productId
+        LEFT JOIN cart b ON b.productId = p.id AND b.customerId = :customerId
+        WHERE c.categoryId = :categoryId ORDER BY p.name
+    """)
+    fun products(customerId: Long, categoryId: Long): Flow<List<ProductAvailability>>
+
+    @Query("""
+        SELECT p.stock > COALESCE(b.quantity, 0)
+        FROM products p LEFT JOIN cart b ON b.productId = p.id AND b.customerId = :customerId
+        WHERE p.id = :productId
+    """)
+    suspend fun canAdd(customerId: Long, productId: Long): Boolean?
 
     @Query("SELECT * FROM customers WHERE phone = :phone")
     suspend fun customer(phone: String): Customer?

@@ -7,7 +7,7 @@ import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import com.example.yamakoz.data.local.entity.Product
+import com.example.yamakoz.data.local.ProductAvailability
 import java.math.BigDecimal
 import java.text.NumberFormat
 import java.util.Locale
@@ -18,7 +18,7 @@ internal fun priceText(kopecks: Long): String =
 
 @Composable
 fun ProductsScreen(
-    products: List<Product>?,
+    products: List<ProductAvailability>?,
     search: String,
     onSearch: (String) -> Unit,
     add: (Long) -> Unit
@@ -46,10 +46,10 @@ fun ProductsScreen(
                         Column(Modifier.padding(12.dp)) {
                             Text(product.name, style = MaterialTheme.typography.titleMedium)
                             Text(priceText(product.price))
-                            Text("В наличии: ${product.stock}")
+                            Text("В наличии: ${product.available}")
                             Button(
                                 onClick = { add(product.id) },
-                                enabled = product.stock > 0
+                                enabled = product.available > 0
                             ) { Text("В корзину") }
                         }
                     }
