@@ -4,6 +4,8 @@
 
 **10 категорий · 50 товаров · Android 10+**
 
+[Скачать APK](https://github.com/Arkadiy186/Yamakoz/raw/refs/heads/main/artifacts/yamakoz-debug.apk)
+
 
 https://github.com/user-attachments/assets/9dc4c470-4173-4291-83d3-7f0333b4bdce
 
